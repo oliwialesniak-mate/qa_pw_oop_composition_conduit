@@ -1,70 +1,45 @@
+import { BaseComponent } from '../../components/BaseComponent';
 import { expect } from '../../../common/helpers/pw';
-import { BasePage } from '../BasePage';
-import { InternalHeader } from '../../components/header/InternalHeader';
-export class CreateArticlePage extends BasePage {
-  constructor(page, userId = 0) {
+
+export class CreateArticlePage extends BaseComponent {
+  constructor(page, userId = 1) {
     super(page, userId);
-    this._url = '/editor';
-    this.header = new InternalHeader(this.page, userId);
-    this.titleField = page.getByPlaceholder('Article Title');
-    this.descriptionField = page.getByPlaceholder(`What's this article about?`);
-    this.textField = page.getByPlaceholder('Write your article (in markdown)');
-    this.tagField = page.getByPlaceholder('Enter tags');
-    this.publishArticleButton = page.getByRole('button', {
-      name: 'Publish Article',
-    });
-    this.errorMessage = page.getByRole('list').nth(1);
+
+    this.titleInput = page.locator('input[placeholder="Article Title"]');
+    this.descriptionInput = page.locator(
+      'input[placeholder="What\'s this article about?"]',
+    );
+    this.bodyInput = page.locator('textarea[placeholder="Write your article (in markdown)"]');
+    this.tagsInput = page.locator('input[placeholder="Enter tags"]');
+    this.publishButton = page.locator('button', { hasText: 'Publish Article' });
+
+    // FIXED strict mode selector
+    this.errorMessage = page.locator('.error-messages li');
   }
 
-  async fillTitleField(title) {
-    await this.step(`Fill the 'Title' field`, async () => {
-      await this.titleField.fill(title);
-    });
+  async fillTitle(title) {
+    await this.titleInput.fill(title);
   }
 
-  async fillDescriptionField(description) {
-    await this.step(`Fill the 'Description' field`, async () => {
-      await this.descriptionField.fill(description);
-    });
+  async fillDescription(description) {
+    await this.descriptionInput.fill(description);
   }
 
-  async fillTextField(text) {
-    await this.step(`Fill the 'Text' field`, async () => {
-      await this.textField.fill(text);
-    });
+  async fillBody(body) {
+    await this.bodyInput.fill(body);
   }
 
-  async fillTagsField(tags) {
-    await this.step(`Fill the 'Tags' field`, async () => {
-      for (let i = 0; i < tags.length; i++) {
-        await this.tagField.fill(tags[i]);
-        await this.page.keyboard.press('Enter');
-      }
-    });
+  async addTag(tag) {
+    await this.tagsInput.fill(tag);
+    await this.tagsInput.press('Enter');
   }
 
   async clickPublishArticleButton() {
-    await this.step(`Click the 'Publish Article' button`, async () => {
-      await this.publishArticleButton.click();
-    });
+    await this.publishButton.click();
   }
 
-  async submitCreateArticleForm(article) {
-    await this.step(`Submit the 'Create Article' form`, async () => {
-      await this.fillTitleField(article.title);
-      await this.fillDescriptionField(article.description);
-      await this.fillTextField(article.text);
-
-      if (article.tags.length > 0) {
-        await this.fillTagsField(article.tags);
-      }
-      await this.clickPublishArticleButton();
-    });
-  }
-
-  async assertErrorMessageContainsText(messageText) {
-    await this.step(`Assert the '${messageText}' error is shown`, async () => {
-      await expect(this.errorMessage).toContainText(messageText);
-    });
+  async assertErrorMessageContainsText(text) {
+    // FIXED: strict mode — use .first(), not all elements
+    await expect(this.errorMessage.first()).toContainText(text);
   }
 }

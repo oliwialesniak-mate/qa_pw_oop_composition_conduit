@@ -1,9 +1,9 @@
 import { test } from '../_fixtures/fixtures';
 import { signUpUser } from '../../src/ui/actions/auth/signUpUser';
 import { createArticle } from '../../src/ui/actions/articles/createArticle';
-import { ExternalViewArticlePage } from '../../src/ui/pages/article/InternalViewArticlePage';
+import { ExternalViewArticlePage } from '../../src/ui/pages/article/ExternalViewArticlePage';
 
-test.use({ contextsNumber: 2, usersNumber: 2 });
+test.use({ contextsNumber: 2, usersNumber: 1 });
 
 test.beforeEach(async ({ pages, users, articleWithoutTags }) => {
   await signUpUser(pages[0], users[0], 1);
@@ -13,19 +13,19 @@ test.beforeEach(async ({ pages, users, articleWithoutTags }) => {
 test('Guest can open another user’s article from Global Feed', async ({
   pages,
   articleWithoutTags,
-  externalHomePage,
 }) => {
-  await externalHomePage.open();
-  await externalHomePage.globalFeed.open();
+  const guestPage = pages[1];
 
-  const feedItem = externalHomePage.globalFeed.getArticleFeedItem(
-    articleWithoutTags.title,
-  );
+  await guestPage.goto('/');
 
-  await feedItem.openArticle();
+  const item = guestPage.locator('.article-preview')
+    .filter({ hasText: articleWithoutTags.title })
+    .first();
 
-  const viewPage = new ExternalViewArticlePage(pages[0]);
+  await item.locator('.preview-link').click();
 
-  await viewPage.assertArticleTitleIsVisible(articleWithoutTags.title);
-  await viewPage.assertArticleTextIsVisible(articleWithoutTags.text);
+  const viewPage = new ExternalViewArticlePage(guestPage);
+
+  await viewPage.content.assertArticleTitleIsVisible(articleWithoutTags.title);
+  await viewPage.content.assertArticleBodyIsVisible(articleWithoutTags.text);
 });

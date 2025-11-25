@@ -1,11 +1,15 @@
-export class BaseArticleContentBlock {
-  constructor(page) {
-    this.page = page;
-    this.root = page.locator('.article-page');
+import { BaseComponent } from './BaseComponent';
 
+export class BaseArticleContentBlock extends BaseComponent {
+  constructor(page, userId) {
+    super(page, userId);
+
+    this.root = page.locator('.article-page');
     this.title = this.root.locator('h1');
-    this.body = this.root.locator('div.article-content');
-    this.tags = this.root.locator('.tag-list a');
+    this.body = this.root.locator('.article-content');
+
+    // FIXED tag selector
+    this.tags = this.root.locator('.tag-list .tag-pill');
   }
 
   async getTitle() {

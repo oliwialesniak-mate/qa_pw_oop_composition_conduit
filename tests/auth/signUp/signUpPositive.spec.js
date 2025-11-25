@@ -1,3 +1,4 @@
+// tests/auth/signUp/signUpPositive.spec.js
 import { test } from '../../_fixtures/fixtures';
 
 test('Successful `Sign up` flow test', async ({
@@ -10,6 +11,5 @@ test('Successful `Sign up` flow test', async ({
   await signUpPage.fillEmailField(user.email);
   await signUpPage.fillPasswordField(user.password);
   await signUpPage.clickSignUpButton();
-
   await internalHomePage.yourFeed.assertTabLinkVisible();
 });

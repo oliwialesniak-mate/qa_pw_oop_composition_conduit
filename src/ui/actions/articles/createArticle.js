@@ -1,22 +1,34 @@
+// src/ui/actions/articles/createArticle.js
 import { CreateArticlePage } from '../../pages/article/CreateArticlePage';
-import { ViewArticlePage } from '../../pages/article/InternalViewArticlePage';
-import { testStep } from '../../../common/helpers/pw';
+import { InternalViewArticlePage } from '../../pages/article/InternalViewArticlePage';
+import { ExternalViewArticlePage } from '../../pages/article/ExternalViewArticlePage';
+import { testStep } from '../../../../src/common/helpers/pw'; // adapt path to your testStep helper
 
+/**
+ * Create article; for userId > 0 we consider internal (logged-in) flow.
+ * Returns the view page instance (InternalViewArticlePage or ExternalViewArticlePage)
+ */
 export async function createArticle(page, article, userId = 0) {
-  article['url'] = await testStep(
-    `Create an article`,
-    async () => {
-      const createArticlePage = new CreateArticlePage(page, userId);
-      const viewArticlePage = new ViewArticlePage(page, userId);
+  return await testStep(`Create article "${article.title}"`, async () => {
+    const createArticlePage = new CreateArticlePage(page, userId);
+    await createArticlePage.open();
+    await createArticlePage.submitCreateArticleForm(article);
 
-      await createArticlePage.open();
-      await createArticlePage.submitCreateArticleForm(article);
-      await viewArticlePage.assertArticleTitleIsVisible(article.title);
+    // After submitting the article, the app typically navigates to the article page.
+    // Determine which view page to return based on userId
+    let viewPage;
+    if (userId && userId !== 0) {
+      viewPage = new InternalViewArticlePage(page, userId);
+    } else {
+      viewPage = new ExternalViewArticlePage(page);
+    }
 
-      return viewArticlePage.getCurrentPageUrl();
-    },
-    userId,
-  );
+    // Wait title visible
+    await viewPage.content.title.waitFor({ state: 'visible', timeout: 10000 });
 
-  return article;
+    // Validate basic title
+    await viewPage.content.assertTitleContains(article.title);
+
+    return viewPage;
+  });
 }

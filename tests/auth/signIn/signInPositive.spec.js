@@ -1,3 +1,4 @@
+// tests/auth/signIn/signInPositive.spec.js
 import { test } from '../../_fixtures/fixtures';
 import { SignInPage } from '../../../src/ui/pages/auth/SignInPage';
 import { InternalHomePage } from '../../../src/ui/pages/home/InternalHomePage';
@@ -9,8 +10,10 @@ let homePage;
 test.use({ contextsNumber: 2 });
 
 test.beforeEach(async ({ pages, user }) => {
+  // register user in first context
   await signUpUser(pages[0], user);
 
+  // prepare signInPage and homePage on second context
   signInPage = new SignInPage(pages[1]);
   homePage = new InternalHomePage(pages[1]);
 });
@@ -20,6 +23,5 @@ test('Successful `Sign in` flow test', async ({ user }) => {
   await signInPage.fillEmailField(user.email);
   await signInPage.fillPasswordField(user.password);
   await signInPage.clickSignInButton();
-
   await homePage.yourFeed.assertTabLinkVisible();
 });

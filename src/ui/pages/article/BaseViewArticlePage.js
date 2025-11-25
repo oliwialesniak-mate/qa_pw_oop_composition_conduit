@@ -1,4 +1,3 @@
-// src/ui/pages/article/BaseViewArticlePage.js
 import { BaseComponent } from '../../components/BaseComponent';
 import { ArticleContentBlock } from '../../components/ArticleContentBlock';
 
@@ -6,15 +5,18 @@ export class BaseViewArticlePage extends BaseComponent {
   constructor(page, userId = 0) {
     super(page, userId);
 
-    // Common article content block
-    this.content = new ArticleContentBlock(page);
+    this.content = new ArticleContentBlock(page, userId);
   }
 
-  /**
-   * Open article by URL
-   * @param {string} url
-   */
-  async open(url) {
+  async open(slugOrUrl) {
+    // FIX: accept slug OR full URL
+    const url = slugOrUrl.startsWith('/')
+      ? slugOrUrl
+      : `/article/${slugOrUrl}`;
+
     await this.page.goto(url);
+
+    // ensure article content is visible
+    await this.content.title.waitFor({ state: 'visible' });
   }
 }

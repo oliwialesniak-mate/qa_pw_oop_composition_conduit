@@ -1,3 +1,4 @@
+// tests/auth/signUp/openSignUpFromHome.spec.js
 import { test } from '../../_fixtures/fixtures';
 
 test('Open SignUp page from Home page', async ({
@@ -5,8 +6,6 @@ test('Open SignUp page from Home page', async ({
   externalHomePage,
 }) => {
   await externalHomePage.open();
-
   await externalHomePage.header.clickSignUpLink();
-
   await signUpPage.assertOpened();
 });

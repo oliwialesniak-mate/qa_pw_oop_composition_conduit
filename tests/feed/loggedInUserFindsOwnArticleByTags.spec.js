@@ -1,10 +1,11 @@
+// tests/feed/loggedInUserFindsOwnArticleByTags.spec.js
 import { test } from '../_fixtures/fixtures';
 import { signUpUser } from '../../src/ui/actions/auth/signUpUser';
 import { createArticle } from '../../src/ui/actions/articles/createArticle';
 
 test.beforeEach(async ({ page, user, articleWithOneTag }) => {
   await signUpUser(page, user);
-  await createArticle(page, articleWithOneTag);
+  await createArticle(page, articleWithOneTag, user.id ?? 1);
 });
 
 test('Logged-in user finds own article by tag in Popular Tags', async ({
