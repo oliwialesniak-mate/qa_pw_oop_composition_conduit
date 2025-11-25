@@ -1,7 +1,7 @@
 import { test } from '../_fixtures/fixtures';
 import { signUpUser } from '../../src/ui/actions/auth/signUpUser';
 import { createArticle } from '../../src/ui/actions/articles/createArticle';
-import { ExternalViewArticlePage } from '../../src/ui/pages/article/ViewArticlePage';
+import { ExternalViewArticlePage } from '../../src/ui/pages/article/InternalViewArticlePage';
 
 test.use({ contextsNumber: 2, usersNumber: 2 });
 

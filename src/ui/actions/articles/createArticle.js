@@ -1,5 +1,5 @@
 import { CreateArticlePage } from '../../pages/article/CreateArticlePage';
-import { ViewArticlePage } from '../../pages/article/ViewArticlePage';
+import { ViewArticlePage } from '../../pages/article/InternalViewArticlePage';
 import { testStep } from '../../../common/helpers/pw';
 
 export async function createArticle(page, article, userId = 0) {

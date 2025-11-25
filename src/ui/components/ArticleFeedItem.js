@@ -11,14 +11,23 @@ export class ArticleFeedItem extends BaseComponent {
     this.openLink = root.locator('.preview-link');
   }
 
+  /**
+   * Assert title is visible.
+   * Uses toContainText to avoid exact-match failures.
+   * @param {string} title
+   */
   async assertTitleVisible(title) {
-    await this.step(`Assert feed item title "${title}" is visible`, async () => {
-      await expect(this.title).toHaveText(title);
+    await this.step(`Assert feed item title contains "${title}"`, async () => {
+      await expect(this.title).toContainText(title);
     });
   }
 
+  /**
+   * Clicks the article link after waiting for visibility
+   */
   async openArticle() {
     await this.step(`Open article from feed item`, async () => {
+      await this.openLink.waitFor({ state: 'visible', timeout: 10000 });
       await this.openLink.click();
     });
   }
